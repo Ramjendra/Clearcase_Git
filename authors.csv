@@ -1,0 +1,9 @@
+# ClearCase username → Git author mapping
+# Format: cc_username,Git Full Name,git@email.com
+# Lines starting with # are ignored.
+#
+# Example:
+# jsmith,John Smith,john.smith@company.com
+# mary.jones,Mary Jones,mary.jones@company.com
+#
+# Users not listed here get: username <username@migrated.local>

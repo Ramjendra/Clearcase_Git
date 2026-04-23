@@ -1,0 +1,19 @@
+/*
+ * main.c  --  application entry point
+ * VERSION: /main/1   LABEL: INITIAL_IMPORT
+ * Author:  jsmith   Date: 2023-06-01.08:00:00
+ * Comment: Initial import from legacy codebase
+ *
+ * $Header: /vobs/my_project/src/main.c@@/main/1  2023-06-01.08:00:00  jsmith  $
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "config.h"
+#include "utils.h"
+
+int main(int argc, char *argv[])
+{
+    printf("Hello from %s\n", APP_NAME);
+    return 0;
+}

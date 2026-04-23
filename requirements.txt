@@ -1,0 +1,2 @@
+pyyaml>=6.0
+chardet>=5.0       # optional but recommended: improves encoding detection for legacy C files

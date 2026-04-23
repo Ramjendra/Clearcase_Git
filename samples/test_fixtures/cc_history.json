@@ -1,0 +1,52 @@
+{
+  "_comment": "Simulated ClearCase lshistory output for all elements. Each entry maps to one CCVersion.",
+  "versions": [
+
+    {"element_path":"/vobs/my_project/include/types.h",   "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-06-01T08:00:00+00:00","comment":"Initial import","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/types.h",   "version_id":"/main/2","branch":"main","version_number":2,"created_by":"jsmith",    "created_at":"2023-09-15T10:00:00+00:00","comment":"Add error_t, status_t","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/types.h",   "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-01-20T14:00:00+00:00","comment":"Add bool_t for ANSI C","labels":["REL_2_0","REL_2_1"],"merge_sources":[]},
+
+    {"element_path":"/vobs/my_project/include/config.h",  "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-06-01T08:01:00+00:00","comment":"Initial import","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/config.h",  "version_id":"/main/2","branch":"main","version_number":2,"created_by":"jsmith",    "created_at":"2023-09-15T10:01:00+00:00","comment":"Add DEBUG/TRACE macros","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/config.h",  "version_id":"/main/rel2_bugfix/1","branch":"rel2_bugfix","version_number":1,"created_by":"jsmith","created_at":"2023-10-01T11:00:00+00:00","comment":"Hotfix: make LOGLEVEL configurable","labels":["REL_1_0_PATCH1"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/config.h",  "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-01-20T14:01:00+00:00","comment":"Merge rel2_bugfix; add WATCHDOG_TIMEOUT","labels":["REL_2_0"],"merge_sources":["/vobs/my_project/include/config.h@@/main/rel2_bugfix/1"]},
+
+    {"element_path":"/vobs/my_project/include/utils.h",   "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-06-01T08:02:00+00:00","comment":"Initial import","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/utils.h",   "version_id":"/main/2","branch":"main","version_number":2,"created_by":"jsmith",    "created_at":"2023-09-15T10:02:00+00:00","comment":"Add str_trim, str_split","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/utils.h",   "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-01-20T14:02:00+00:00","comment":"Add circular buffer API","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/include/utils.h",   "version_id":"/main/4","branch":"main","version_number":4,"created_by":"mary.jones","created_at":"2024-05-20T11:30:00+00:00","comment":"Add safe_memcpy (security fix)","labels":["REL_2_1","SECURITY_FIX_001"],"merge_sources":[]},
+
+    {"element_path":"/vobs/my_project/src/main.c",        "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-06-01T08:10:00+00:00","comment":"Initial import","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/main.c",        "version_id":"/main/2","branch":"main","version_number":2,"created_by":"jsmith",    "created_at":"2023-09-15T10:10:00+00:00","comment":"Add argument parsing; initialise logging","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/main.c",        "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-01-20T14:10:00+00:00","comment":"Add watchdog thread; refactor arg parse","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/main.c",        "version_id":"/main/rel2_bugfix/1","branch":"rel2_bugfix","version_number":1,"created_by":"jsmith","created_at":"2024-02-05T09:00:00+00:00","comment":"Bugfix: null-check infile before use","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/main.c",        "version_id":"/main/rel2_bugfix/2","branch":"rel2_bugfix","version_number":2,"created_by":"jsmith","created_at":"2024-02-10T09:00:00+00:00","comment":"Replace memcpy with safe_memcpy","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/main.c",        "version_id":"/main/4","branch":"main","version_number":4,"created_by":"build_svc","created_at":"2024-05-20T11:45:00+00:00","comment":"Merge rel2_bugfix: safe_memcpy + remove hard-coded paths","labels":["REL_2_1","SECURITY_FIX_001"],"merge_sources":["/vobs/my_project/src/main.c@@/main/rel2_bugfix/2"]},
+
+    {"element_path":"/vobs/my_project/src/utils.c",       "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-06-01T08:11:00+00:00","comment":"Initial import","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/utils.c",       "version_id":"/main/2","branch":"main","version_number":2,"created_by":"jsmith",    "created_at":"2023-09-15T10:11:00+00:00","comment":"Add str_trim, str_split","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/utils.c",       "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-01-20T14:11:00+00:00","comment":"Add circ_buf implementation","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/utils.c",       "version_id":"/main/4","branch":"main","version_number":4,"created_by":"build_svc","created_at":"2024-05-20T11:46:00+00:00","comment":"Add safe_memcpy implementation (security fix)","labels":["REL_2_1","SECURITY_FIX_001"],"merge_sources":[]},
+
+    {"element_path":"/vobs/my_project/src/parser.c",      "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-09-15T10:30:00+00:00","comment":"Initial parser: key=value","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/parser.c",      "version_id":"/main/2","branch":"main","version_number":2,"created_by":"mary.jones","created_at":"2024-01-20T15:00:00+00:00","comment":"Add section [name] support","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/parser.c",      "version_id":"/main/rel3_feature/1","branch":"rel3_feature","version_number":1,"created_by":"mary.jones","created_at":"2024-03-01T10:00:00+00:00","comment":"Add multi-line values","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/parser.c",      "version_id":"/main/rel3_feature/2","branch":"rel3_feature","version_number":2,"created_by":"mary.jones","created_at":"2024-04-01T11:00:00+00:00","comment":"Add escape sequence handling","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/parser.c",      "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-06-15T16:00:00+00:00","comment":"Merge rel3_feature: multi-line + escapes","labels":["REL_3_0"],"merge_sources":["/vobs/my_project/src/parser.c@@/main/rel3_feature/2"]},
+
+    {"element_path":"/vobs/my_project/src/legacy.c",      "version_id":"/main/1","branch":"main","version_number":1,"created_by":"rmuller",   "created_at":"2023-06-01T08:20:00+00:00","comment":"Initial import: HAL for XC2000","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/legacy.c",      "version_id":"/main/2","branch":"main","version_number":2,"created_by":"rmuller",   "created_at":"2024-01-20T14:20:00+00:00","comment":"Add hal_read with timeout","labels":["REL_2_0"],"merge_sources":[]},
+
+    {"element_path":"/vobs/my_project/src/conflict.c",    "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2024-01-20T14:30:00+00:00","comment":"Initial data processor","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/conflict.c",    "version_id":"/main/rel2_bugfix/1","branch":"rel2_bugfix","version_number":1,"created_by":"jsmith","created_at":"2024-02-05T10:00:00+00:00","comment":"Stricter bounds check","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/src/conflict.c",    "version_id":"/main/rel2_bugfix/2","branch":"rel2_bugfix","version_number":2,"created_by":"jsmith","created_at":"2024-02-10T09:05:00+00:00","comment":"UNRESOLVED MERGE: rel2_bugfix vs rel3_feature","labels":[],"merge_sources":["/vobs/my_project/src/conflict.c@@/main/rel3_feature/1"]},
+
+    {"element_path":"/vobs/my_project/Makefile",          "version_id":"/main/1","branch":"main","version_number":1,"created_by":"jsmith",    "created_at":"2023-06-01T08:30:00+00:00","comment":"Initial Makefile","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/Makefile",          "version_id":"/main/2","branch":"main","version_number":2,"created_by":"jsmith",    "created_at":"2023-09-15T10:40:00+00:00","comment":"Add debug/release targets","labels":["REL_1_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/Makefile",          "version_id":"/main/3","branch":"main","version_number":3,"created_by":"mary.jones","created_at":"2024-01-20T14:40:00+00:00","comment":"Add CLEARCASE_ROOT paths (later fixed)","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/Makefile",          "version_id":"/main/4","branch":"main","version_number":4,"created_by":"build_svc","created_at":"2024-06-15T16:10:00+00:00","comment":"Remove CC paths; add dep generation","labels":["REL_3_0"],"merge_sources":[]},
+
+    {"element_path":"/vobs/my_project/tests/test_utils.c","version_id":"/main/1","branch":"main","version_number":1,"created_by":"mary.jones","created_at":"2024-01-20T15:30:00+00:00","comment":"Initial unit tests for utils","labels":["REL_2_0"],"merge_sources":[]},
+    {"element_path":"/vobs/my_project/tests/test_utils.c","version_id":"/main/2","branch":"main","version_number":2,"created_by":"mary.jones","created_at":"2024-05-21T09:00:00+00:00","comment":"Add tests for safe_memcpy","labels":["REL_2_1"],"merge_sources":[]}
+  ]
+}

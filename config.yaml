@@ -1,0 +1,107 @@
+# ============================================================
+# ClearCase → GitHub Migration Configuration
+# ============================================================
+# Copy this file and adjust to your environment before running.
+# Run: python3 main.py --config config.yaml
+# ============================================================
+
+# ── ClearCase source settings ─────────────────────────────────
+clearcase:
+  # List every VOB tag to migrate (can be multiple)
+  vob_tags:
+    - /vobs/my_project
+
+  # Name of the ClearCase view to use (must already exist on the CC server)
+  view_tag: migration_view
+
+  # Local mount point for the view
+  view_root: /view
+
+  # Optional: only migrate specific branches (empty = all)
+  include_branches: []
+  #  - main
+  #  - rel2_bugfix
+  #  - rel3_dev
+
+  # Branches to skip
+  exclude_branches:
+    - CHECKEDOUT
+
+  # Optional: only migrate specific labels (empty = all)
+  include_labels: []
+
+  # Labels to skip
+  exclude_labels:
+    - LABEL_TEMP
+
+  # UCM mode — set true if using UCM streams/activities
+  is_ucm: false
+  stream_tag: ""       # e.g. integration_stream@/vobs/my_project
+  baseline_tag: ""     # e.g. BL_RELEASE_3_0@/vobs/my_project
+
+# ── Git output settings ───────────────────────────────────────
+git:
+  output_dir: ./git_output
+
+  # The ClearCase 'main' branch maps to this git branch
+  default_branch: main
+
+  # Optional CSV for author mapping: cc_user,Git Name,git@email.com
+  author_map_file: authors.csv
+
+  # Git LFS for large binary files
+  use_lfs: true
+  lfs_threshold_mb: 50.0
+  lfs_patterns:
+    - "*.o"
+    - "*.a"
+    - "*.so"
+    - "*.dll"
+    - "*.exe"
+    - "*.lib"
+    - "*.zip"
+    - "*.tar.gz"
+    - "*.bz2"
+    - "*.7z"
+    - "*.pdf"
+    - "*.bin"
+    - "*.img"
+    - "*.iso"
+
+# ── GitHub destination settings ───────────────────────────────
+github:
+  enabled: true
+  org: ""                       # GitHub org name, or leave empty for personal account
+  repo_name: my_project_migrated
+  token_env_var: GITHUB_TOKEN   # export GITHUB_TOKEN=ghp_xxx before running
+  visibility: private           # private | public | internal
+  push_force: false             # only set true if you know what you're doing
+
+# ── Pipeline control ──────────────────────────────────────────
+workspace_dir: ./workspace      # intermediate state files live here
+log_dir: ./logs
+
+max_workers: 4                  # parallel element history fetches
+batch_size: 200                 # versions processed per batch
+
+resume: true                    # resume from saved state if interrupted
+dry_run: false                  # true = plan only, no git writes or push
+
+# ── File handling ─────────────────────────────────────────────
+preserve_empty_dirs: true       # add .gitkeep so git tracks empty directories
+sanitize_filenames: true        # replace ClearCase-illegal chars in filenames
+detect_encoding: true           # auto-detect charset for non-UTF-8 C files
+
+skip_derived_objects: true      # skip .o .a .so files even if in VOB
+skip_lost_and_found: false      # set true to ignore lost+found elements
+
+generate_gitattributes: true    # write .gitattributes (LFS + line endings)
+generate_gitignore: true        # write .gitignore (build artifacts)
+
+# Glob patterns to exclude entirely
+exclude_patterns:
+  - "*.o"
+  - "*.a"
+  - ".cmake_meta"
+  - "*.keep"
+  - "*.contrib"

@@ -1,0 +1,52 @@
+{
+  "vobs": {
+    "/vobs/my_project": {
+      "tag": "/vobs/my_project",
+      "branches": [
+        {"name": "main",          "parent": null,   "created_by": "admin",      "comment": "trunk branch"},
+        {"name": "rel2_bugfix",   "parent": "main", "created_by": "jsmith",     "comment": "REL 2.x patch branch"},
+        {"name": "rel3_feature",  "parent": "main", "created_by": "mary.jones", "comment": "feature branch for rel 3.0"}
+      ],
+      "labels": [
+        {"name": "INITIAL_IMPORT", "vob": "/vobs/my_project"},
+        {"name": "REL_1_0",        "vob": "/vobs/my_project"},
+        {"name": "REL_2_0",        "vob": "/vobs/my_project"},
+        {"name": "REL_2_1",        "vob": "/vobs/my_project"},
+        {"name": "SECURITY_FIX_001","vob": "/vobs/my_project"},
+        {"name": "REL_3_0",        "vob": "/vobs/my_project"},
+        {"name": "REL_1_0_PATCH1", "vob": "/vobs/my_project"}
+      ],
+      "elements": [
+        "/vobs/my_project/include/types.h",
+        "/vobs/my_project/include/config.h",
+        "/vobs/my_project/include/utils.h",
+        "/vobs/my_project/src/main.c",
+        "/vobs/my_project/src/utils.c",
+        "/vobs/my_project/src/parser.c",
+        "/vobs/my_project/src/legacy.c",
+        "/vobs/my_project/src/conflict.c",
+        "/vobs/my_project/Makefile",
+        "/vobs/my_project/tests/test_utils.c"
+      ],
+      "streams": [],
+      "activities": []
+    }
+  },
+  "branch_git_map": {
+    "main":         "main",
+    "rel2_bugfix":  "rel2_bugfix",
+    "rel3_feature": "rel3_feature"
+  },
+  "all_elements": [
+    "/vobs/my_project/include/types.h",
+    "/vobs/my_project/include/config.h",
+    "/vobs/my_project/include/utils.h",
+    "/vobs/my_project/src/main.c",
+    "/vobs/my_project/src/utils.c",
+    "/vobs/my_project/src/parser.c",
+    "/vobs/my_project/src/legacy.c",
+    "/vobs/my_project/src/conflict.c",
+    "/vobs/my_project/Makefile",
+    "/vobs/my_project/tests/test_utils.c"
+  ]
+}
