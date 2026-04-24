@@ -59,9 +59,20 @@ _CC_INCLUDE_RE = re.compile(
     r'#\s*include\s*["<]([^">\s]+@@[^">\s]+)[">]'
 )
 
+# Windows-style backslash in #include paths (ClearCase on Windows clients)
+_WIN_INCLUDE_RE = re.compile(
+    r'#\s*include\s*"([^"]*\\[^"]*)"'
+)
+
 # Hard-coded view root in paths
 _VIEW_ROOT_RE = re.compile(
     r'/(?:view|clearcase)/[a-zA-Z0-9_./-]+?/vobs/',
+    re.IGNORECASE,
+)
+
+# Windows-style view root: C:\views\myview\vobs\ or \\server\views\...
+_WIN_VIEW_ROOT_RE = re.compile(
+    r'[A-Za-z]:\\(?:views?|clearcase)\\[^\\]+\\vobs\\',
     re.IGNORECASE,
 )
 
@@ -76,6 +87,17 @@ _PRAGMA_IDENT_RE = re.compile(
     r'#pragma\s+ident\s+"[^"]*@@[^"]*"'
 )
 
+# VIEWTAG / VOBROOT environment variable references in C source
+_VIEWTAG_RE = re.compile(
+    r'\bVIEWTAG\b|\bCC_VIEWTAG\b|\bCLEARCASE_VIEWTAG\b'
+)
+
+# Pro*C / Oracle embedded SQL host variable block markers
+_PROC_EXEC_SQL_RE = re.compile(
+    r'^\s*EXEC\s+SQL\b',
+    re.IGNORECASE | re.MULTILINE,
+)
+
 # Derived object suffixes that should never be in a VOB
 _DERIVED_SUFFIXES = frozenset([
     ".o", ".obj", ".a", ".lib", ".so", ".dll", ".exe",
@@ -86,6 +108,11 @@ C_EXTENSIONS = frozenset([
     ".c", ".h", ".cpp", ".cxx", ".cc", ".C",
     ".hpp", ".hxx", ".hh", ".H",
     ".inl", ".tcc",
+    ".pc", ".pcc",   # Pro*C / Oracle embedded C
+])
+
+CMAKE_NAMES = frozenset([
+    "cmakelists.txt", "cmakelists.txt.in",
 ])
 
 
@@ -188,7 +215,7 @@ class CFileAgent:
                 text = new_text
                 modified = True
 
-        # ── hard-coded view-root paths ────────────────────────────────────────
+        # ── hard-coded view-root paths (Unix) ────────────────────────────────
         if self.normalize_paths:
             new_text, n = _VIEW_ROOT_RE.subn("/vobs/", text)
             if n:
@@ -197,6 +224,45 @@ class CFileAgent:
                 ))
                 text = new_text
                 modified = True
+
+        # ── hard-coded view-root paths (Windows) ─────────────────────────────
+        if self.normalize_paths:
+            new_text, n = _WIN_VIEW_ROOT_RE.subn("/vobs/", text)
+            if n:
+                result.issues.append(CFileIssue(
+                    "win_view_root_path",
+                    f"Replaced {n} Windows-style view-root path(s)",
+                ))
+                text = new_text
+                modified = True
+
+        # ── Windows backslash in #include paths ───────────────────────────────
+        if self.fix_includes and suffix in C_EXTENSIONS:
+            def _fix_win_include(m: re.Match) -> str:
+                clean = m.group(1).replace("\\", "/")
+                return f'#include "{clean}"'
+            new_text, n = _WIN_INCLUDE_RE.subn(_fix_win_include, text)
+            if n:
+                result.issues.append(CFileIssue(
+                    "win_include_path",
+                    f"Fixed {n} Windows-style backslash #include path(s)",
+                ))
+                text = new_text
+                modified = True
+
+        # ── VIEWTAG references in source ──────────────────────────────────────
+        if self.normalize_paths and _VIEWTAG_RE.search(text):
+            result.issues.append(CFileIssue(
+                "viewtag_ref",
+                "Source references VIEWTAG/CC_VIEWTAG env variable — review manually",
+            ))
+
+        # ── Pro*C embedded SQL detection ─────────────────────────────────────
+        if suffix in (".pc", ".pcc") and _PROC_EXEC_SQL_RE.search(text):
+            result.issues.append(CFileIssue(
+                "proc_embedded_sql",
+                "Pro*C file contains embedded SQL (EXEC SQL) — ensure Oracle precompiler runs after migration",
+            ))
 
         # ── merge conflict markers ────────────────────────────────────────────
         if _CC_MERGE_CONFLICT_RE.search(text):
@@ -225,6 +291,42 @@ class CFileAgent:
 
         return result
 
+    def analyze_cmake(self, path: str, raw_bytes: bytes) -> CFileAnalysis:
+        """
+        CMakeLists.txt / *.cmake files often reference ClearCase view paths
+        in set(CMAKE_PREFIX_PATH ...) or find_package() hints.
+        """
+        result = self.analyze(path, raw_bytes)
+        if result.is_binary:
+            return result
+
+        text = (result.rewritten_content or raw_bytes).decode("utf-8", errors="replace")
+        modified = False
+
+        # Replace CLEARCASE_ROOT / VIEWROOT cmake variables
+        if "CLEARCASE_ROOT" in text or "CLEARCASE_VIEWROOT" in text:
+            text = text.replace("$ENV{CLEARCASE_ROOT}", "${REPO_ROOT}")
+            text = text.replace("$ENV{CLEARCASE_VIEWROOT}", "${REPO_ROOT}")
+            text = text.replace("CLEARCASE_ROOT", "REPO_ROOT")
+            result.issues.append(CFileIssue(
+                "cmake_cc_var",
+                "Replaced CLEARCASE_ROOT/VIEWROOT references in CMake file",
+            ))
+            modified = True
+
+        # Replace Unix view-root paths inside cmake strings
+        new_text, n = _VIEW_ROOT_RE.subn("${REPO_ROOT}/", text)
+        if n:
+            text = new_text
+            result.issues.append(CFileIssue(
+                "cmake_view_path", f"Fixed {n} view-root path(s) in CMake file",
+            ))
+            modified = True
+
+        if modified:
+            result.rewritten_content = text.encode("utf-8", errors="replace")
+        return result
+
     def analyze_makefile(self, path: str, raw_bytes: bytes) -> CFileAnalysis:
         """
         Makefiles often contain ClearCase view-root paths and CLEARCASE_ROOT
@@ -237,14 +339,20 @@ class CFileAgent:
         text = (result.rewritten_content or raw_bytes).decode("utf-8", errors="replace")
         modified = False
 
-        # Replace CLEARCASE_ROOT with a neutral variable
-        if "CLEARCASE_ROOT" in text or "CLEARCASE_VIEWROOT" in text:
+        # Replace CLEARCASE_ROOT / VOBROOT with a neutral variable
+        cc_var_found = any(k in text for k in (
+            "CLEARCASE_ROOT", "CLEARCASE_VIEWROOT", "VOBROOT", "CC_VOBROOT",
+        ))
+        if cc_var_found:
             text = text.replace("$(CLEARCASE_ROOT)", "$(REPO_ROOT)")
             text = text.replace("${CLEARCASE_ROOT}", "$(REPO_ROOT)")
             text = text.replace("$(CLEARCASE_VIEWROOT)", "$(REPO_ROOT)")
+            text = text.replace("$(VOBROOT)", "$(REPO_ROOT)")
+            text = text.replace("${VOBROOT}", "$(REPO_ROOT)")
+            text = text.replace("$(CC_VOBROOT)", "$(REPO_ROOT)")
             result.issues.append(CFileIssue(
                 "makefile_cc_var",
-                "Replaced CLEARCASE_ROOT/VIEWROOT references with $(REPO_ROOT)",
+                "Replaced CLEARCASE_ROOT/VIEWROOT/VOBROOT references with $(REPO_ROOT)",
             ))
             modified = True
 

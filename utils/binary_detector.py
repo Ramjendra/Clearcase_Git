@@ -18,6 +18,9 @@ def is_binary(data: bytes) -> bool:
     """Heuristic: return True if data is likely binary content."""
     if not data:
         return False
+    # Fast path: known binary magic bytes
+    if is_known_binary_format(data):
+        return True
     sample = data[:_SNIFF_BYTES]
     # Null bytes → binary
     if b"\x00" in sample:
@@ -78,11 +81,21 @@ def normalize_line_endings(data: bytes, encoding: str = "utf-8") -> bytes:
         return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
-# ── C-specific binary patterns ─────────────────────────────────────────────
+# ── binary magic bytes ────────────────────────────────────────────────────
 
-_ELF_MAGIC = b"\x7fELF"
-_COFF_MAGIC = b"\x4d\x5a"  # MZ (PE/COFF)
-_AR_MAGIC = b"!<arch>\n"   # .a archive
+_ELF_MAGIC   = b"\x7fELF"           # Linux/Unix ELF executable/object
+_COFF_MAGIC  = b"\x4d\x5a"          # MZ — Windows PE/COFF executable
+_AR_MAGIC    = b"!<arch>\n"          # .a static archive
+_PDF_MAGIC   = b"%PDF"               # PDF document
+_ZIP_MAGIC   = b"PK\x03\x04"        # ZIP / JAR / WAR / APK
+_ZIP_EMPTY   = b"PK\x05\x06"        # empty ZIP
+_CLASS_MAGIC = b"\xca\xfe\xba\xbe"  # Java .class file
+_MACHO_LE    = b"\xce\xfa\xed\xfe"  # Mach-O 32-bit LE
+_MACHO_BE    = b"\xcf\xfa\xed\xfe"  # Mach-O 64-bit LE
+_MACHO_FAT   = b"\xca\xfe\xba\xbe"  # Mach-O fat binary (same as .class — checked by extension)
+_PNG_MAGIC   = b"\x89PNG"
+_GIF_MAGIC   = b"GIF8"
+_JPEG_MAGIC  = b"\xff\xd8\xff"
 
 
 def is_object_or_archive(data: bytes) -> bool:
@@ -93,4 +106,24 @@ def is_object_or_archive(data: bytes) -> bool:
         data[:4] == _ELF_MAGIC
         or data[:2] == _COFF_MAGIC
         or data[:8] == _AR_MAGIC
+        or data[:4] == _CLASS_MAGIC
+        or data[:4] in (_MACHO_LE, _MACHO_BE)
+    )
+
+
+def is_known_binary_format(data: bytes, path: str = "") -> bool:
+    """
+    Return True for well-known binary formats (images, PDFs, archives)
+    that should never be treated as text, regardless of byte ratios.
+    """
+    if len(data) < 4:
+        return False
+    return (
+        data[:4] == _PDF_MAGIC
+        or data[:4] == _ZIP_MAGIC
+        or data[:4] == _ZIP_EMPTY
+        or data[:3] == _JPEG_MAGIC
+        or data[:4] == _PNG_MAGIC
+        or data[:4] == _GIF_MAGIC
+        or is_object_or_archive(data)
     )

@@ -61,6 +61,10 @@ class ExtractorAgent(BaseAgent):
         commits = json.loads(commits_path.read_text())
         self._report(f"Extracting content for {len(commits)} commits")
 
+        # Pre-fetch all unique versions in parallel to warm the disk cache,
+        # then enrich commits sequentially (preserves order).
+        self._prefetch_versions_parallel(commits)
+
         enriched_commits = []
         for i, commit in enumerate(commits):
             self._report(f"Processing commit {i+1}/{len(commits)}", i, len(commits))
@@ -85,6 +89,55 @@ class ExtractorAgent(BaseAgent):
         self._report(f"Extraction complete → {out_path}")
         return AgentResult(success=True, data=enriched_commits)
 
+    def _prefetch_versions_parallel(self, commits: list[dict]) -> None:
+        """
+        Fetch all unique (element_path, version_id) pairs from ClearCase in
+        parallel using a thread pool, writing results to the version cache.
+        Sequential enrichment can then read from cache without blocking on I/O.
+        """
+        seen: set[str] = set()
+        work: list[tuple[str, str]] = []
+        for commit in commits:
+            for change_meta in commit.get("file_changes", {}).values():
+                if change_meta.get("is_deleted") or change_meta.get("is_symlink"):
+                    continue
+                ep = change_meta.get("element_path", "")
+                vid = change_meta.get("version_id", "")
+                if not ep or not vid or vid.endswith("/0"):
+                    continue
+                key = f"{ep}@@{vid}"
+                if key in seen:
+                    continue
+                seen.add(key)
+                cache_key = __import__("hashlib").md5(key.encode()).hexdigest()
+                if not (self._cache_dir / cache_key).exists():
+                    work.append((ep, vid))
+
+        if not work:
+            return
+
+        workers = min(self.cfg.max_workers, len(work))
+        log.info("[extractor] Pre-fetching %d unique versions with %d workers",
+                 len(work), workers)
+
+        def _fetch(item: tuple[str, str]) -> None:
+            ep, vid = item
+            cache_key = __import__("hashlib").md5(f"{ep}@@{vid}".encode()).hexdigest()
+            cache_file = self._cache_dir / cache_key
+            if cache_file.exists():
+                return
+            try:
+                raw = self.retry(
+                    self.cc.get_version_content, ep, vid,
+                    label=f"{ep}@@{vid}",
+                )
+                cache_file.write_bytes(raw)
+            except Exception as exc:
+                log.warning("Pre-fetch failed %s@@%s: %s", ep, vid, exc)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(_fetch, work))
+
     def _enrich_commit(self, commit: dict) -> dict:
         """Fill in actual file content bytes (base64) into commit's file_changes."""
         enriched_changes: dict[str, dict] = {}
@@ -96,10 +149,19 @@ class ExtractorAgent(BaseAgent):
             version_id = change_meta.get("version_id")
             element_path = change_meta.get("element_path")
 
+            # Deleted element (rmname/rmelem) — emit a delete, no content needed
+            if change_meta.get("is_deleted"):
+                enriched_changes[rel_path] = {
+                    "content_b64": None, "deleted": True,
+                    "is_executable": False, "is_symlink": False,
+                    "symlink_target": None, "lfs": False,
+                }
+                continue
+
             if not version_id or not element_path:
                 continue
 
-            # Check if version 0 (directory creation) → skip
+            # Skip version 0 on any branch (directory creation pseudo-version)
             if version_id.endswith("/0"):
                 continue
 
@@ -171,7 +233,8 @@ class ExtractorAgent(BaseAgent):
 
         if not is_binary(raw):
             if suffix in (".c", ".h", ".cpp", ".cxx", ".cc", ".hpp",
-                          ".hxx", ".hh", ".C", ".H", ".inl", ".tcc"):
+                          ".hxx", ".hh", ".C", ".H", ".inl", ".tcc",
+                          ".pc", ".pcc"):
                 analysis = self.c_agent.analyze(rel_path, raw)
                 if analysis.rewritten_content is not None:
                     raw = analysis.rewritten_content
@@ -188,6 +251,15 @@ class ExtractorAgent(BaseAgent):
                                 "symlink_target": None, "lfs": False}
             elif name_lower in ("makefile", "gnumakefile") or name_lower.endswith(".mk"):
                 analysis = self.c_agent.analyze_makefile(rel_path, raw)
+                if analysis.rewritten_content is not None:
+                    raw = analysis.rewritten_content
+                if analysis.has_issues:
+                    self._issues.setdefault(rel_path, []).extend([
+                        {"kind": iss.kind, "detail": iss.detail, "line": iss.line}
+                        for iss in analysis.issues
+                    ])
+            elif name_lower in ("cmakelists.txt", "cmakelists.txt.in") or suffix in (".cmake",):
+                analysis = self.c_agent.analyze_cmake(rel_path, raw)
                 if analysis.rewritten_content is not None:
                     raw = analysis.rewritten_content
                 if analysis.has_issues:

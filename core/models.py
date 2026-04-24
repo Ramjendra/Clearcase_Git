@@ -41,6 +41,7 @@ class CCVersion:
     is_binary: Optional[bool] = None
     symlink_target: Optional[str] = None
     file_mode: int = 0o644
+    is_deleted: bool = False       # True when event is rmname/rmelem
 
 
 @dataclass

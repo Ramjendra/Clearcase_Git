@@ -119,14 +119,14 @@ class HistoryAgent(BaseAgent):
             for ver in vers:
                 rel_path = self._element_to_rel_path(ver.element_path)
                 if rel_path:
-                    # Content will be filled by ExtractorAgent; store version_id
                     file_changes[rel_path] = (
                         None,   # placeholder for content bytes
                         False,  # is_executable (filled later)
                         False,  # is_symlink
                         None,   # symlink_target
-                        ver.version_id,   # extra: CC version to extract
-                        ver.element_path, # extra: CC element path
+                        ver.version_id,    # extra: CC version to extract
+                        ver.element_path,  # extra: CC element path
+                        ver.is_deleted,    # extra: emit git delete if True
                     )
                 # Merge arrows → merge parents (resolved later)
                 for merge_src in ver.merge_sources:
@@ -283,11 +283,12 @@ class HistoryAgent(BaseAgent):
             "timestamp": gc.timestamp.isoformat(),
             "file_changes": {
                 path: {
-                    "version_id": change[4] if len(change) > 4 else None,
+                    "version_id":   change[4] if len(change) > 4 else None,
                     "element_path": change[5] if len(change) > 5 else None,
                     "is_executable": change[1],
-                    "is_symlink": change[2],
+                    "is_symlink":   change[2],
                     "symlink_target": change[3],
+                    "is_deleted":   change[6] if len(change) > 6 else False,
                 }
                 for path, change in gc.file_changes.items()
             },

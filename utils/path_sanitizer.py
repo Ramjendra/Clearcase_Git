@@ -6,6 +6,7 @@ filesystems or in Git (NUL, leading dots, Windows-reserved names, etc.).
 """
 from __future__ import annotations
 import re
+import unicodedata
 import logging
 from pathlib import PurePosixPath
 
@@ -44,6 +45,9 @@ def sanitize_path(cc_path: str, vob_root: str) -> str:
         rel = cc_path
 
     rel = rel.lstrip("/")
+    # Collapse double slashes that sometimes appear in ClearCase paths
+    while "//" in rel:
+        rel = rel.replace("//", "/")
     parts = rel.split("/")
     sanitized = [_sanitize_component(p) for p in parts if p]
     result = "/".join(sanitized)
@@ -54,15 +58,25 @@ def sanitize_path(cc_path: str, vob_root: str) -> str:
 
 def _sanitize_component(name: str) -> str:
     """Sanitize a single path component."""
+    # Normalize Unicode to NFC (macOS VOBs may store NFD; git/Linux expects NFC)
+    name = unicodedata.normalize("NFC", name)
+
+    # Strip leading and trailing spaces (invisible, causes issues on Windows/git)
+    name = name.strip()
+
     # Replace illegal chars with underscore
     name = _ILLEGAL.sub("_", name)
 
-    # Remove trailing dots and spaces (Windows FS issue)
-    name = name.rstrip(". ")
+    # Remove trailing dots (Windows FS issue)
+    name = name.rstrip(".")
 
     # Windows reserved names
     if _WIN_RESERVED.match(name):
         name = "_" + name
+
+    # Guard against components that would confuse git itself
+    if name == ".git" or name.lower() == ".git":
+        name = "_git"
 
     # ClearCase-specific suffixes that git doesn't need
     for suf in _CLEARCASE_SUFFIXES:

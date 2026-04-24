@@ -49,9 +49,15 @@ def _ct(*args, cwd=None, timeout=120) -> str:
 
 
 _TS_FORMATS = [
-    "%Y%m%d.%H%M%S",         # 20240415.143022
-    "%d-%b-%Y.%H:%M:%S",     # 15-Apr-2024.14:30:22
-    "%Y-%m-%dT%H:%M:%S%z",   # ISO
+    "%Y%m%d.%H%M%S",          # 20240415.143022  (most common cleartool format)
+    "%d-%b-%Y.%H:%M:%S",      # 15-Apr-2024.14:30:22
+    "%Y-%m-%dT%H:%M:%S%z",    # ISO 8601 with timezone
+    "%Y-%m-%dT%H:%M:%S",      # ISO 8601 without timezone
+    "%m/%d/%y %H:%M:%S",      # Windows ClearCase: 04/15/24 14:30:22
+    "%m/%d/%Y %H:%M:%S",      # Windows ClearCase: 04/15/2024 14:30:22
+    "%d/%m/%Y %H:%M:%S",      # European locale variant
+    "%Y-%m-%d %H:%M:%S",      # SQL-style
+    "%d-%b-%y.%H:%M:%S",      # 15-Apr-24.14:30:22 (2-digit year)
 ]
 
 
@@ -186,7 +192,7 @@ class ClearCaseClient:
                          branch_filter: Optional[str] = None) -> list[CCVersion]:
         """
         Return all versions of an element across all branches (or a specific branch).
-        Uses 'cleartool lshistory -minor' to get every version.
+        Uses 'cleartool lshistory -minor' to get every version including rmname events.
         """
         fmt = (
             r"---CCVER---\n"
@@ -198,6 +204,7 @@ class ClearCaseClient:
             r"comment:%c\n"
             r"labels:%Nl\n"
             r"merges:%Nm\n"
+            r"event:%e\n"
         )
         args = [
             "lshistory", "-minor", "-nco",
@@ -209,6 +216,49 @@ class ClearCaseClient:
 
         out = _ct(*args, timeout=300)
         return self._parse_lshistory(out, element_path)
+
+    def directory_history(self, dir_element_path: str) -> list[dict]:
+        """
+        Return rmname events for a directory element so we can emit git deletes.
+        Each entry: {name, branch, user, date, comment}
+        """
+        fmt = (
+            r"---CCDIR---\n"
+            r"event:%e\n"
+            r"name:%n\n"
+            r"branch:%Bn\n"
+            r"user:%u\n"
+            r"date:%Nd\n"
+            r"comment:%c\n"
+        )
+        try:
+            out = _ct("lshistory", "-minor", "-nco", "-fmt", fmt,
+                      dir_element_path, timeout=300)
+        except Exception as exc:
+            log.warning("directory_history failed for %s: %s", dir_element_path, exc)
+            return []
+
+        events = []
+        for block in out.split("---CCDIR---"):
+            block = block.strip()
+            if not block:
+                continue
+            kv: dict[str, str] = {}
+            for line in block.splitlines():
+                if ":" in line:
+                    k, _, v = line.partition(":")
+                    kv[k.strip()] = v.strip()
+            event_type = kv.get("event", "")
+            if event_type in ("rmname", "rmelem"):
+                events.append({
+                    "event": event_type,
+                    "name": kv.get("name", ""),
+                    "branch": kv.get("branch", "main"),
+                    "user": kv.get("user", "unknown"),
+                    "date": kv.get("date", "19700101.000000"),
+                    "comment": kv.get("comment", ""),
+                })
+        return events
 
     def _parse_lshistory(self, raw: str, element_path: str) -> list[CCVersion]:
         versions: list[CCVersion] = []
@@ -238,6 +288,10 @@ class ClearCaseClient:
             merges_raw = kv.get("merges", "")
             merge_sources = [m.strip() for m in merges_raw.split() if m.strip()]
 
+            event_type = kv.get("event", "checkin")
+            # rmname/rmelem events mean the file was deleted in this version
+            is_deleted = event_type in ("rmname", "rmelem", "destroy version")
+
             cv = CCVersion(
                 element_path=kv.get("element", element_path),
                 version_id=ver_id,
@@ -248,9 +302,10 @@ class ClearCaseClient:
                 comment=kv.get("comment", ""),
                 labels=labels,
                 merge_sources=merge_sources,
+                is_deleted=is_deleted,
             )
-            # skip version 0 (directory creation pseudo-version)
-            if ver_num > 0:
+            # skip version 0 on any branch (directory creation pseudo-version)
+            if ver_num > 0 or is_deleted:
                 versions.append(cv)
         return versions
 
