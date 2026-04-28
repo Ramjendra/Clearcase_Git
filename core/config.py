@@ -45,6 +45,8 @@ class GitHubConfig:
     token_env_var: str = "GITHUB_TOKEN"
     visibility: str = "private"        # private | public | internal
     push_force: bool = False
+    use_ssh: bool = False              # True = git@github.com (SSH key auth, no token needed)
+    ssh_key_path: str = ""             # optional path to a specific SSH key (~/.ssh/id_rsa)
 
 
 @dataclass
@@ -107,6 +109,8 @@ def load_config(path: str) -> MigrationConfig:
         token_env_var=gh_raw.get("token_env_var", "GITHUB_TOKEN"),
         visibility=gh_raw.get("visibility", "private"),
         push_force=gh_raw.get("push_force", False),
+        use_ssh=gh_raw.get("use_ssh", False),
+        ssh_key_path=gh_raw.get("ssh_key_path", ""),
     )
 
     return MigrationConfig(
@@ -144,6 +148,9 @@ def validate_config(cfg: MigrationConfig) -> list[str]:
     if cfg.github.enabled:
         if not cfg.github.repo_name:
             errors.append("github.repo_name required when github.enabled=true")
-        if not os.environ.get(cfg.github.token_env_var):
-            errors.append(f"env var {cfg.github.token_env_var} not set")
+        if not cfg.github.use_ssh and not os.environ.get(cfg.github.token_env_var):
+            errors.append(
+                f"env var {cfg.github.token_env_var} not set "
+                f"(or set github.use_ssh=true to use SSH key authentication)"
+            )
     return errors

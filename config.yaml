@@ -73,7 +73,17 @@ github:
   enabled: true
   org: ""                       # GitHub org name, or leave empty for personal account
   repo_name: my_project_migrated
-  token_env_var: GITHUB_TOKEN   # export GITHUB_TOKEN=ghp_xxx before running
+
+  # ── Authentication: choose ONE method ─────────────────────
+  # Option A — SSH key (recommended, no token needed):
+  use_ssh: true                 # uses git@github.com — requires SSH key added to GitHub
+  ssh_key_path: ""              # optional: path to specific key, e.g. ~/.ssh/id_rsa_github
+                                # leave empty to use the default SSH key (~/.ssh/id_rsa)
+
+  # Option B — Personal Access Token:
+  # use_ssh: false
+  token_env_var: GITHUB_TOKEN   # export GITHUB_TOKEN=ghp_xxx before running (only if use_ssh=false)
+
   visibility: private           # private | public | internal
   push_force: false             # only set true if you know what you're doing
 

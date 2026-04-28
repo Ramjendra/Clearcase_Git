@@ -36,19 +36,36 @@ class PublisherAgent(BaseAgent):
         self.git = git
         self._token = os.environ.get(cfg.github.token_env_var, "")
 
+    def _build_repo_url(self, owner: str) -> str:
+        """Return the correct remote URL based on SSH vs HTTPS auth preference."""
+        gh = self.cfg.github
+        if gh.use_ssh:
+            return f"git@github.com:{owner}/{gh.repo_name}.git"
+        # HTTPS with embedded token
+        return f"https://{owner}:{self._token}@github.com/{owner}/{gh.repo_name}.git"
+
+    def _ssh_env(self) -> dict:
+        """Build environment override for SSH key if a custom path is set."""
+        gh = self.cfg.github
+        if gh.use_ssh and gh.ssh_key_path:
+            key = os.path.expanduser(gh.ssh_key_path)
+            return {"GIT_SSH_COMMAND": f"ssh -i {key} -o StrictHostKeyChecking=accept-new"}
+        return {}
+
     def run(self, **kwargs) -> AgentResult:
         gh = self.cfg.github
         if not gh.enabled:
             self._report("GitHub publishing disabled — skipping")
             return AgentResult(success=True, data={"skipped": True})
 
-        if not self._token:
+        if not gh.use_ssh and not self._token:
             return AgentResult(
                 success=False,
-                error=f"GitHub token not set in env var {gh.token_env_var}",
+                error=f"GitHub token not set in env var {gh.token_env_var}. "
+                      f"Set github.use_ssh=true in config to use SSH key auth instead.",
             )
 
-        # 1. Create or verify repo
+        # 1. Create or verify repo (API call — only possible with token)
         repo_url = self._ensure_repo()
         if not repo_url:
             return AgentResult(success=False, error="Failed to create/find GitHub repo")
@@ -56,12 +73,14 @@ class PublisherAgent(BaseAgent):
         # 2. Add remote and push
         self._report(f"Pushing to {repo_url}")
         self.git.add_remote("origin", repo_url)
+        ssh_env = self._ssh_env()
         try:
             self.git.push(
                 remote="origin",
                 all_branches=True,
                 all_tags=True,
                 force=gh.push_force,
+                extra_env=ssh_env,
             )
         except Exception as exc:
             return AgentResult(success=False, error=f"Push failed: {exc}")
@@ -108,28 +127,38 @@ class PublisherAgent(BaseAgent):
         gh = self.cfg.github
         owner = gh.org or self._get_authenticated_user()
         if not owner:
+            # SSH-only mode with no token: assume repo already exists, build URL directly
+            if gh.use_ssh:
+                url = self._build_repo_url(gh.org or "unknown")
+                log.info("SSH mode, no API token — assuming repo exists: %s", url)
+                return url
             return None
 
-        # Check if repo exists
-        existing = self._api("GET", f"/repos/{owner}/{gh.repo_name}", expected_codes=(200, 404))
-        if existing and "clone_url" in existing:
-            log.info("Repo already exists: %s", existing["clone_url"])
-            return existing["clone_url"]
+        # Check if repo exists via API (requires token)
+        if self._token:
+            existing = self._api("GET", f"/repos/{owner}/{gh.repo_name}", expected_codes=(200, 404))
+            if existing and "clone_url" in existing:
+                log.info("Repo already exists: %s", existing["clone_url"])
+                return self._build_repo_url(owner)
 
-        # Create it
-        endpoint = f"/orgs/{gh.org}/repos" if gh.org else "/user/repos"
-        payload = {
-            "name": gh.repo_name,
-            "private": gh.visibility == "private",
-            "visibility": gh.visibility,
-            "description": "Migrated from ClearCase",
-            "auto_init": False,
-        }
-        result = self._api("POST", endpoint, body=payload, expected_codes=(201,))
-        if result:
-            log.info("Created repo: %s", result.get("clone_url"))
-            return result.get("clone_url")
-        return None
+            # Create it
+            endpoint = f"/orgs/{gh.org}/repos" if gh.org else "/user/repos"
+            payload = {
+                "name": gh.repo_name,
+                "private": gh.visibility == "private",
+                "visibility": gh.visibility,
+                "description": "Migrated from ClearCase",
+                "auto_init": False,
+            }
+            result = self._api("POST", endpoint, body=payload, expected_codes=(201,))
+            if result:
+                log.info("Created repo: %s", result.get("ssh_url" if gh.use_ssh else "clone_url"))
+                return self._build_repo_url(owner)
+        else:
+            # SSH + no token: assume repo exists
+            log.info("SSH auth, no token — skipping repo creation API call")
+
+        return self._build_repo_url(owner)
 
     def _get_authenticated_user(self) -> Optional[str]:
         result = self._api("GET", "/user")

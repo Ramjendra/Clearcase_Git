@@ -21,10 +21,10 @@ log = logging.getLogger(__name__)
 
 def _run(args: list[str], cwd: Optional[str] = None,
          check: bool = True, input_data: Optional[bytes] = None,
-         timeout: int = 120) -> subprocess.CompletedProcess:
+         timeout: int = 120, env: Optional[dict] = None) -> subprocess.CompletedProcess:
     return subprocess.run(
         args, cwd=cwd, capture_output=True,
-        input=input_data, timeout=timeout, check=check,
+        input=input_data, timeout=timeout, check=check, env=env,
     )
 
 
@@ -202,7 +202,8 @@ class GitClient:
              cwd=str(self.repo_path), check=False)
 
     def push(self, remote: str = "origin", all_branches: bool = True,
-              all_tags: bool = True, force: bool = False) -> None:
+              all_tags: bool = True, force: bool = False,
+              extra_env: dict | None = None) -> None:
         args = ["git", "push", remote]
         if all_branches:
             args.append("--all")
@@ -210,7 +211,12 @@ class GitClient:
             args.append("--tags")
         if force:
             args.append("--force")
-        _run(args, cwd=str(self.repo_path), timeout=1800)
+        env = None
+        if extra_env:
+            import copy
+            env = copy.copy(os.environ)
+            env.update(extra_env)
+        _run(args, cwd=str(self.repo_path), timeout=1800, env=env)
 
     def lfs_install(self) -> None:
         _run(["git", "lfs", "install"], cwd=str(self.repo_path), check=False)

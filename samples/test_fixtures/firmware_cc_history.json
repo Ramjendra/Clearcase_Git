@@ -1,0 +1,56 @@
+{
+  "versions": [
+    {"element_path":"/vobs/shared_libs/include/fw_types.h",   "version_id":"/main/1","branch":"main","created_by":"jsmith",    "created_at":"2024-01-05T09:00:00+00:00","comment":"Initial firmware types","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/shared_libs/include/logger.h",     "version_id":"/main/1","branch":"main","created_by":"jsmith",    "created_at":"2024-01-05T09:01:00+00:00","comment":"Initial firmware types","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/shared_libs/src/logger.cpp",       "version_id":"/main/1","branch":"main","created_by":"jsmith",    "created_at":"2024-01-05T09:02:00+00:00","comment":"Initial firmware types","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+    {"element_path":"/vobs/shared_libs/Makefile",             "version_id":"/main/1","branch":"main","created_by":"build_svc", "created_at":"2024-01-05T09:03:00+00:00","comment":"Initial firmware types","labels":["INITIAL_IMPORT"],"merge_sources":[]},
+
+    {"element_path":"/vobs/hal/include/hal.h",                "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-01-08T10:00:00+00:00","comment":"Add HAL interface","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/hal/src/hal.cpp",                  "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-01-08T10:01:00+00:00","comment":"Add HAL interface","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/hal/Makefile",                     "version_id":"/main/1","branch":"main","created_by":"build_svc", "created_at":"2024-01-08T10:02:00+00:00","comment":"Add HAL interface","labels":[],"merge_sources":[]},
+
+    {"element_path":"/vobs/drivers/uart/include/uart_driver.h","version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-01-12T11:00:00+00:00","comment":"Add UART driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/drivers/uart/src/uart_driver.cpp",  "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-01-12T11:01:00+00:00","comment":"Add UART driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/drivers/spi/include/spi_driver.h",  "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-01-15T11:00:00+00:00","comment":"Add SPI driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/drivers/spi/src/spi_driver.cpp",    "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-01-15T11:01:00+00:00","comment":"Add SPI driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/drivers/i2c/include/i2c_driver.h",  "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-01-20T11:00:00+00:00","comment":"Add I2C driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/drivers/i2c/src/i2c_driver.cpp",    "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-01-20T11:01:00+00:00","comment":"Add I2C driver","labels":[],"merge_sources":[]},
+
+    {"element_path":"/vobs/network/include/network.h",         "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-01-25T14:00:00+00:00","comment":"Add network stack","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/network/src/network.cpp",           "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-01-25T14:01:00+00:00","comment":"Add network stack","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/storage/include/storage.h",         "version_id":"/main/1","branch":"main","created_by":"build_svc","created_at":"2024-01-28T09:00:00+00:00","comment":"Add flash storage","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/storage/src/storage.cpp",           "version_id":"/main/1","branch":"main","created_by":"build_svc","created_at":"2024-01-28T09:01:00+00:00","comment":"Add flash storage","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/security/include/security.h",       "version_id":"/main/1","branch":"main","created_by":"admin",    "created_at":"2024-02-01T08:00:00+00:00","comment":"Add crypto engine","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/security/src/security.cpp",         "version_id":"/main/1","branch":"main","created_by":"admin",    "created_at":"2024-02-01T08:01:00+00:00","comment":"Add crypto engine","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/display/include/display.h",         "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-02-05T10:00:00+00:00","comment":"Add display driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/display/src/display.cpp",           "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-02-05T10:01:00+00:00","comment":"Add display driver","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/audio/include/audio.h",             "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-02-08T11:00:00+00:00","comment":"Add audio codec","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/audio/src/audio.cpp",               "version_id":"/main/1","branch":"main","created_by":"rmuller",  "created_at":"2024-02-08T11:01:00+00:00","comment":"Add audio codec","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/power/include/power.h",             "version_id":"/main/1","branch":"main","created_by":"jsmith",   "created_at":"2024-02-12T09:00:00+00:00","comment":"Add power manager","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/power/src/power.cpp",               "version_id":"/main/1","branch":"main","created_by":"jsmith",   "created_at":"2024-02-12T09:01:00+00:00","comment":"Add power manager","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/platform/include/platform.h",       "version_id":"/main/1","branch":"main","created_by":"jsmith",   "created_at":"2024-02-15T10:00:00+00:00","comment":"Add platform abstraction","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/platform/src/platform.cpp",         "version_id":"/main/1","branch":"main","created_by":"jsmith",   "created_at":"2024-02-15T10:01:00+00:00","comment":"Add platform abstraction","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/bootloader/include/bootloader.h",   "version_id":"/main/1","branch":"main","created_by":"admin",    "created_at":"2024-02-20T08:00:00+00:00","comment":"Add bootloader","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/bootloader/src/bootloader.cpp",     "version_id":"/main/1","branch":"main","created_by":"admin",    "created_at":"2024-02-20T08:01:00+00:00","comment":"Add bootloader","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/test_framework/include/test.h",     "version_id":"/main/1","branch":"main","created_by":"mary.jones","created_at":"2024-02-22T14:00:00+00:00","comment":"Add test framework","labels":[],"merge_sources":[]},
+
+    {"element_path":"/vobs/firmware_core/include/firmware.h",  "version_id":"/main/1","branch":"main","created_by":"jsmith",   "created_at":"2024-03-01T09:00:00+00:00","comment":"Initial firmware integration","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/firmware_core/src/firmware.cpp",    "version_id":"/main/1","branch":"main","created_by":"jsmith",   "created_at":"2024-03-01T09:01:00+00:00","comment":"Initial firmware integration","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/firmware_core/Makefile",            "version_id":"/main/1","branch":"main","created_by":"build_svc","created_at":"2024-03-01T09:02:00+00:00","comment":"Initial firmware integration","labels":[],"merge_sources":[]},
+
+    {"element_path":"/vobs/hal/include/hal.h",                 "version_id":"/main/rel2_bugfix/1","branch":"main/rel2_bugfix","created_by":"mary.jones","created_at":"2024-03-10T11:00:00+00:00","comment":"Fix GPIO init race condition","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/hal/src/hal.cpp",                   "version_id":"/main/rel2_bugfix/1","branch":"main/rel2_bugfix","created_by":"mary.jones","created_at":"2024-03-10T11:01:00+00:00","comment":"Fix GPIO init race condition","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/security/src/security.cpp",         "version_id":"/main/rel2_bugfix/1","branch":"main/rel2_bugfix","created_by":"admin",     "created_at":"2024-03-12T08:00:00+00:00","comment":"SECURITY_FIX_001: Replace weak RNG","labels":["SECURITY_FIX_001"],"merge_sources":[]},
+    {"element_path":"/vobs/power/src/power.cpp",               "version_id":"/main/rel2_bugfix/1","branch":"main/rel2_bugfix","created_by":"jsmith",    "created_at":"2024-03-14T09:00:00+00:00","comment":"Fix deep sleep wake issue","labels":[],"merge_sources":[]},
+
+    {"element_path":"/vobs/shared_libs/include/logger.h",      "version_id":"/main/2","branch":"main","created_by":"jsmith",   "created_at":"2024-03-20T10:00:00+00:00","comment":"REL_2_0: Logger enhancements","labels":["REL_2_0"],"merge_sources":["/vobs/shared_libs/include/logger.h@@/main/rel2_bugfix/1"]},
+    {"element_path":"/vobs/firmware_core/src/firmware.cpp",    "version_id":"/main/2","branch":"main","created_by":"jsmith",   "created_at":"2024-03-20T10:05:00+00:00","comment":"REL_2_0: Integrate all subsystems","labels":["REL_2_0"],"merge_sources":[]},
+
+    {"element_path":"/vobs/network/include/network.h",         "version_id":"/main/rel3_feature/1","branch":"main/rel3_feature","created_by":"mary.jones","created_at":"2024-03-25T14:00:00+00:00","comment":"REL_3: IPv6 support","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/storage/src/storage.cpp",           "version_id":"/main/rel3_feature/1","branch":"main/rel3_feature","created_by":"build_svc","created_at":"2024-03-26T09:00:00+00:00","comment":"REL_3: Wear levelling","labels":[],"merge_sources":[]},
+    {"element_path":"/vobs/bootloader/src/bootloader.cpp",     "version_id":"/main/rel3_feature/1","branch":"main/rel3_feature","created_by":"admin",    "created_at":"2024-03-27T08:00:00+00:00","comment":"REL_3: Secure boot chain","labels":[],"merge_sources":[]},
+
+    {"element_path":"/vobs/firmware_core/include/firmware.h",  "version_id":"/main/3","branch":"main","created_by":"jsmith",   "created_at":"2024-04-01T09:00:00+00:00","comment":"REL_3_0: Full firmware release","labels":["REL_3_0"],"merge_sources":["/vobs/firmware_core/include/firmware.h@@/main/rel3_feature/1"]},
+    {"element_path":"/vobs/firmware_core/src/firmware.cpp",    "version_id":"/main/3","branch":"main","created_by":"jsmith",   "created_at":"2024-04-01T09:05:00+00:00","comment":"REL_3_0: Full firmware release","labels":["REL_3_0"],"merge_sources":["/vobs/firmware_core/src/firmware.cpp@@/main/rel3_feature/1"]}
+  ]
+}

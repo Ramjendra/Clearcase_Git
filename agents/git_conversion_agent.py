@@ -231,9 +231,14 @@ class GitConversionAgent(BaseAgent):
     def _attach_labels(self) -> None:
         if self.cfg.dry_run:
             return
+        written_tags: set[str] = set()  # deduplicate across VOBs — same label in 2 VOBs = 1 tag
         for vob_tag, vob_data in self.discovery.get("vobs", {}).items():
             for lb in vob_data.get("labels", []):
                 label_name = lb["name"]
+                safe_tag = _safe_ref(label_name)
+                if safe_tag in written_tags:
+                    continue  # already written this tag from another VOB
+
                 if label_name not in self._label_marks:
                     # Label not encountered in history — attach to latest mark
                     # of default branch as a best-effort
@@ -248,7 +253,6 @@ class GitConversionAgent(BaseAgent):
                 now = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
                 tagger = f"ClearCase Migration <cc2git@migration.local> {now} +0000"
                 msg_bytes = f"ClearCase label: {label_name}\n".encode()
-                safe_tag = _safe_ref(label_name)
 
                 fi = self.git._fast_import_proc
                 def _w(s):
@@ -260,6 +264,7 @@ class GitConversionAgent(BaseAgent):
                 _w(f"data {len(msg_bytes)}")
                 fi.stdin.write(msg_bytes)
                 _w("")
+                written_tags.add(safe_tag)
                 log.debug("Tag %s → mark :%d", safe_tag, mark)
 
 
