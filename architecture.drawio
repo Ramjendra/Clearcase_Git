@@ -427,4 +427,120 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="client_overview_2026" name="Client Overview">
+    <mxGraphModel dx="800" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="860" math="0" shadow="1">
+      <root>
+        <mxCell id="c0" />
+        <mxCell id="c1" parent="c0" />
+
+        <mxCell id="c_title" parent="c1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=26;fontStyle=1;fontColor=#1a2f4e;" value="ClearCase → GitHub Migration" vertex="1">
+          <mxGeometry x="50" y="12" width="1300" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="c_sub" parent="c1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#555;" value="Your code — complete history, every version, every branch — moved to GitHub automatically and safely" vertex="1">
+          <mxGeometry x="50" y="52" width="1300" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- LEFT COLUMN -->
+        <mxCell id="c_before" parent="c1" style="swimlane;startSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;rounded=1;arcSize=4;fontColor=#1a3a5c;" value="BEFORE — Your ClearCase System" vertex="1">
+          <mxGeometry x="30" y="82" width="330" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bl1" parent="c_before" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a3a5c;strokeColor=#0d2137;fontColor=#fff;fontSize=11;" value="Code stored on ClearCase servers&#xa;(not accessible from a web browser)" vertex="1">
+          <mxGeometry x="20" y="62" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bl2" parent="c_before" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e4a7a;strokeColor=#163559;fontColor=#fff;fontSize=11;" value="Every file change recorded:&#xa;Author  ·  Date  ·  Comment" vertex="1">
+          <mxGeometry x="20" y="142" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bl3" parent="c_before" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2471a3;strokeColor=#1a5276;fontColor=#fff;fontSize=11;" value="Release snapshots called Labels&#xa;e.g.  REL_1_0 / REL_2_0 / REL_3_0" vertex="1">
+          <mxGeometry x="20" y="222" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bl4" parent="c_before" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2980b9;strokeColor=#1f6899;fontColor=#fff;fontSize=11;" value="Parallel development lines called Branches&#xa;main / bugfix / feature" vertex="1">
+          <mxGeometry x="20" y="302" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bl5" parent="c_before" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5dade2;strokeColor=#2980b9;fontColor=#fff;fontSize=11;" value="Multiple projects (VOBs)&#xa;with shared code between them" vertex="1">
+          <mxGeometry x="20" y="382" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bl6" parent="c_before" style="text;html=1;align=center;fontSize=10;fontStyle=2;fontColor=#555;whiteSpace=wrap;" value="Requires specialised client software.&#xa;Not compatible with modern DevOps tools." vertex="1">
+          <mxGeometry x="20" y="468" width="290" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- MIDDLE COLUMN -->
+        <mxCell id="c_steps" parent="c1" style="swimlane;startSize=50;fillColor=#fffde7;strokeColor=#f0c030;fontStyle=1;fontSize=13;rounded=1;arcSize=4;fontColor=#7d6608;" value="HOW IT WORKS — 5 Automated Steps, No Manual Work" vertex="1">
+          <mxGeometry x="390" y="82" width="620" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="c_s1" parent="c_steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a3a5c;strokeColor=#0d2137;fontColor=#fff;fontSize=12;align=left;spacingLeft=14;" value="&lt;b&gt;① DISCOVER&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px'&gt;We scan your ClearCase servers and map every project, file, branch, and release label&lt;/span&gt;" vertex="1">
+          <mxGeometry x="30" y="62" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_s2" parent="c_steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e4a7a;strokeColor=#163559;fontColor=#fff;fontSize=12;align=left;spacingLeft=14;" value="&lt;b&gt;② CAPTURE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px'&gt;We read every version of every file — recording who changed it, when, and why — nothing is skipped&lt;/span&gt;" vertex="1">
+          <mxGeometry x="30" y="152" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_s3" parent="c_steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6c3483;strokeColor=#512e5f;fontColor=#fff;fontSize=12;align=left;spacingLeft=14;" value="&lt;b&gt;③ TRANSLATE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px'&gt;We automatically update legacy code references — no manual editing required from your team&lt;/span&gt;" vertex="1">
+          <mxGeometry x="30" y="242" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_s4" parent="c_steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#0e6655;fontColor=#fff;fontSize=12;align=left;spacingLeft=14;" value="&lt;b&gt;④ CONVERT&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px'&gt;We rebuild your complete history in Git — all branches, merges, and release snapshots preserved exactly&lt;/span&gt;" vertex="1">
+          <mxGeometry x="30" y="332" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_s5" parent="c_steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e8449;strokeColor=#196f3d;fontColor=#fff;fontSize=12;align=left;spacingLeft=14;" value="&lt;b&gt;⑤ PUBLISH&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px'&gt;We push everything to your private GitHub repository, secured with SSH key or token authentication&lt;/span&gt;" vertex="1">
+          <mxGeometry x="30" y="422" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_cmd" parent="c_steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#f0c030;fontSize=10;fontStyle=2;fontColor=#7d6608;" value="Single command to run everything:   python3 main.py --config config.yaml" vertex="1">
+          <mxGeometry x="30" y="520" width="560" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- RIGHT COLUMN -->
+        <mxCell id="c_after" parent="c1" style="swimlane;startSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;rounded=1;arcSize=4;fontColor=#1a6b2a;" value="AFTER — Your GitHub Repository" vertex="1">
+          <mxGeometry x="1040" y="82" width="330" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ar1" parent="c_after" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a6b2a;strokeColor=#145222;fontColor=#fff;fontSize=11;" value="Complete history on GitHub&#xa;Every commit, every version — nothing lost" vertex="1">
+          <mxGeometry x="20" y="62" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ar2" parent="c_after" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e8449;strokeColor=#196f3d;fontColor=#fff;fontSize=11;" value="Release labels become version tags&#xa;REL_2_0 becomes a clickable git tag" vertex="1">
+          <mxGeometry x="20" y="142" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ar3" parent="c_after" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#1e8449;fontColor=#fff;fontSize=11;" value="All branches preserved&#xa;Team continues working right away" vertex="1">
+          <mxGeometry x="20" y="222" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ar4" parent="c_after" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#52be80;strokeColor=#27ae60;fontColor=#fff;fontSize=11;" value="Accessible everywhere&#xa;Browser  ·  Any IDE  ·  Command line" vertex="1">
+          <mxGeometry x="20" y="302" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ar5" parent="c_after" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a9dfbf;strokeColor=#52be80;fontColor=#1a6b2a;fontSize=11;" value="Modern development ready&#xa;CI/CD · Code review · Issue tracking" vertex="1">
+          <mxGeometry x="20" y="382" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ar6" parent="c_after" style="text;html=1;align=center;fontSize=10;fontStyle=2;fontColor=#1a6b2a;whiteSpace=wrap;" value="Full history accessible from any web browser.&#xa;No special software installation needed." vertex="1">
+          <mxGeometry x="20" y="468" width="290" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ARROWS -->
+        <mxCell id="c_arr1" edge="1" parent="c1" source="c_before" target="c_steps" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#e67e22;strokeWidth=5;endArrow=block;endFill=1;fillColor=#e67e22;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_arr2" edge="1" parent="c1" source="c_steps" target="c_after" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#27ae60;strokeWidth=5;endArrow=block;endFill=1;fillColor=#27ae60;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BENEFITS BAR -->
+        <mxCell id="c_bzone" parent="c1" style="swimlane;startSize=34;fillColor=#f5f5f5;strokeColor=#aaa;fontStyle=1;fontSize=13;rounded=1;fontColor=#333;" value="KEY GUARANTEES" vertex="1">
+          <mxGeometry x="30" y="692" width="1340" height="148" as="geometry" />
+        </mxCell>
+        <mxCell id="c_b1" parent="c_bzone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a3a5c;strokeColor=#0d2137;fontColor=#fff;fontSize=11;" value="Zero Data Loss&#xa;100% of history migrated" vertex="1">
+          <mxGeometry x="10" y="42" width="204" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c_b2" parent="c_bzone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6c3483;strokeColor=#512e5f;fontColor=#fff;fontSize=11;" value="Fully Automated&#xa;No manual work&#xa;from your team" vertex="1">
+          <mxGeometry x="224" y="42" width="204" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c_b3" parent="c_bzone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#0e6655;fontColor=#fff;fontSize=11;" value="Any Scale&#xa;1 to 15+ projects&#xa;in one run" vertex="1">
+          <mxGeometry x="438" y="42" width="204" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c_b4" parent="c_bzone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7d6608;strokeColor=#6e5f07;fontColor=#fff;fontSize=11;" value="Large File Support&#xa;Binary files handled&#xa;via Git LFS" vertex="1">
+          <mxGeometry x="652" y="42" width="204" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c_b5" parent="c_bzone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c0392b;strokeColor=#922b21;fontColor=#fff;fontSize=11;" value="Safe Preview Mode&#xa;Dry-run shows exactly&#xa;what will happen first" vertex="1">
+          <mxGeometry x="866" y="42" width="204" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c_b6" parent="c_bzone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e8449;strokeColor=#196f3d;fontColor=#fff;fontSize=11;" value="Resilient&#xa;Auto-resumes if&#xa;interrupted mid-run" vertex="1">
+          <mxGeometry x="1080" y="42" width="204" height="90" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>
